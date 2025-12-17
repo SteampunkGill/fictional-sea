@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置页面</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --background-color: #f4f7f9;
+            --text-color: #333;
+            --border-color: #e0e0e0;
+            --card-bg: #ffffff;
+            --nav-width: 220px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .settings-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .settings-nav {
+            width: var(--nav-width);
+            flex-shrink: 0;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-nav h2 {
+            font-size: 1.2rem;
+            padding: 0 20px;
+            margin: 0 0 20px 0;
+        }
+
+        .settings-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .settings-nav li a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .settings-nav li a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .settings-nav li a.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .settings-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .settings-page {
+            display: none;
+        }
+
+        .settings-page.active {
+            display: block;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-danger {
+             background-color: #dc3545;
+             color: white;
+        }
+        
+        /* Profile */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        /* Account Security */
+        .device-list {
+            list-style: none;
+            padding: 0;
+        }
+        .device-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Subscription */
+        .subscription-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 500px;
+        }
+        .subscription-card .plan-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        /* Notifications */
+        .notification-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 28px;
+        }
+        .switch input { display: none; }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 28px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: var(--primary-color);
+        }
+        input:checked + .slider:before {
+          transform: translateX(22px);
+        }
+
+        /* Statistics & Badges */
+        .stats-grid, .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .stat-card, .badge-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .badge-card img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+        .badge-card.locked {
+            filter: grayscale(100%);
+            opacity: 0.6;
+        }
+        
+        /* About Us */
+        .about-section {
+            text-align: center;
+        }
+        .about-section img {
+            width: 100px;
+            margin-bottom: 15px;
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="settings-layout">
+    <nav class="settings-nav">
+        <h2>设置</h2>
+        <ul>
+            <li><a href="#" class="active" data-target="profile">个人资料</a></li>
+            <li><a href="#" data-target="security">账户安全</a></li>
+            <li><a href="#" data-target="subscription">订阅管理</a></li>
+            <li><a href="#" data-target="notifications">通知设置</a></li>
+            <li><a href="#" data-target="stats">学习统计</a></li>
+            <li><a href="#" data-target="badges">成就徽章</a></li>
+            <li><a href="#" data-target="help">帮助与反馈</a></li>
+            <li><a href="#" data-target="about">关于我们</a></li>
+        </ul>
+    </nav>
+
+    <main class="settings-content">
+        <!-- 个人资料 -->
+        <div id="profile" class="settings-page active">
+            <h3>个人资料</h3>
+            <div class="profile-header">
+                <img id="profile-avatar" src="" alt="Avatar" class="profile-avatar">
+                <div>
+                    <input type="text" id="profile-nickname" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="profile-email">电子邮箱</label>
+                <input type="email" id="profile-email" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-bio">个人简介</label>
+                <textarea id="profile-bio"></textarea>
+            </div>
+            <button id="save-profile" class="btn btn-primary">保存</button>
+        </div>
+
+        <!-- 账户安全 -->
+        <div id="security" class="settings-page">
+            <h3>账户安全</h3>
+            <h4>修改密码</h4>
+            <div class="form-group">
+                <label for="old-password">旧密码</label>
+                <input type="password" id="old-password">
+            </div>
+            <div class="form-group">
+                <label for="new-password">新密码</label>
+                <input type="password" id="new-password">
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">确认密码</label>
+                <input type="password" id="confirm-password">
+            </div>
+            <button id="update-password" class="btn btn-primary">更新密码</button>
+            <h4 style="margin-top: 40px;">登录设备管理</h4>
+            <ul id="device-list" class="device-list"></ul>
+        </div>
+
+        <!-- 订阅管理 -->
+        <div id="subscription" class="settings-page">
+            <h3>订阅管理</h3>
+            <div class="subscription-card">
+                 <p class="plan-name" id="sub-plan"></p>
+                 <p>到期日期: <span id="sub-expiry"></span></p>
+                 <p>价格: <span id="sub-price"></span>/月</p>
+                 <button class="btn btn-primary">切换计划</button>
+                 <button class="btn btn-danger">取消订阅</button>
+            </div>
+        </div>
+        
+        <!-- 通知设置 -->
+        <div id="notifications" class="settings-page">
+            <h3>通知设置</h3>
+            <div class="notification-item">
+                <span>邮件通知</span>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+             <div class="notification-item">
+                <span>系统推送</span>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+             <div class="notification-item">
+                <span>活动提醒</span>
+                <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+        </div>
+
+        <!-- 学习统计 -->
+        <div id="stats" class="settings-page">
+            <h3>学习统计</h3>
+            <div id="stats-grid" class="stats-grid"></div>
+        </div>
+
+        <!-- 成就徽章 -->
+        <div id="badges" class="settings-page">
+            <h3>成就徽章</h3>
+            <div id="badge-grid" class="badge-grid"></div>
+        </div>
+
+        <!-- 帮助与反馈 -->
+        <div id="help" class="settings-page">
+            <h3>帮助与反馈</h3>
+            <form id="feedback-form">
+                <div class="form-group">
+                    <label for="issue-type">问题类型</label>
+                    <select id="issue-type">
+                        <option>功能建议</option>
+                        <option>Bug反馈</option>
+                        <option>内容错误</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="feedback-content">反馈内容</label>
+                    <textarea id="feedback-content" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">提交</button>
+            </form>
+        </div>
+
+        <!-- 关于我们 -->
+        <div id="about" class="settings-page">
+            <h3>关于我们</h3>
+            <div class="about-section">
+                <img src="https://vuejs.org/images/logo.png" alt="App Logo">
+                <h2>ReadMemo App</h2>
+                <p>版本 V1.0.0</p>
+                <p>这是一款致力于帮助用户高效阅读和记忆的应用程序。</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- 示例数据 ---
+        const userProfile = {
+            nickname: '爱学习的小明',
+            email: 'xiaoming@example.com',
+            bio: '一名热爱阅读和编程的前端开发者。',
+            avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d'
+        };
+
+        const loginDevices = [
+            { device: 'Chrome on Windows', location: '上海', time: '2025-12-16 10:30' },
+            { device: 'iPhone 15 Pro', location: '北京', time: '2025-12-15 20:05' },
+            { device: 'Safari on MacBook Pro', location: '上海', time: '2025-12-14 11:12' }
+        ];
+
+        const subscription = {
+            plan: '高级会员',
+            expiry: '2026-12-31',
+            price: '¥25'
+        };
+        
+        const learningStats = [
+            { label: '累计学习时长', value: '128 小时' },
+            { label: '完成课程数', value: '32 门' },
+            { label: '连续学习天数', value: '78 天' }
+        ];
+
+        const achievementBadges = [
+            { name: '初学者', img: 'https://img.icons8.com/color/96/000000/laurel-wreath.png', acquired: true },
+            { name: '阅读达人', img: 'https://img.icons8.com/color/96/000000/medal2.png', acquired: true },
+            { name: '学霸', img: 'https://img.icons8.com/color/96/000000/trophy.png', acquired: true },
+            { name: '评论家', img: 'https://img.icons8.com/color/96/000000/filled-star.png', acquired: true },
+            { name: '夜猫子', img: 'https://img.icons8.com/color/96/000000/crescent-moon.png', acquired: false },
+            { name: '全勤奖', img: 'https://img.icons8.com/color/96/000000/calendar-plus.png', acquired: false }
+        ];
+
+        // --- 导航逻辑 ---
+        const navLinks = document.querySelectorAll('.settings-nav a');
+        const pages = document.querySelectorAll('.settings-page');
+
+        function showPage(targetId) {
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+
+            navLinks.forEach(link => link.classList.remove('active'));
+            document.querySelector(`.settings-nav a[data-target="${targetId}"]`).classList.add('active');
+        }
+
+        document.querySelector('.settings-nav').addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const targetId = e.target.getAttribute('data-target');
+                showPage(targetId);
+            }
+        });
+
+        // --- 页面功能初始化 ---
+
+        // 1. 个人资料
+        function initProfile() {
+            document.getElementById('profile-avatar').src = userProfile.avatar;
+            document.getElementById('profile-nickname').value = userProfile.nickname;
+            document.getElementById('profile-email').value = userProfile.email;
+            document.getElementById('profile-bio').value = userProfile.bio;
+            
+            document.getElementById('save-profile').addEventListener('click', () => {
+                alert('资料已保存');
+            });
+        }
+
+        // 2. 账户安全
+        function initSecurity() {
+            const deviceList = document.getElementById('device-list');
+            deviceList.innerHTML = loginDevices.map(d => `
+                <li class="device-item">
+                    <div>
+                        <strong>${d.device}</strong><br>
+                        <small>${d.location} - ${d.time}</small>
+                    </div>
+                    <button class="btn btn-secondary">下线</button>
+                </li>
+            `).join('');
+
+            document.getElementById('update-password').addEventListener('click', () => {
+                document.getElementById('old-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-password').value = '';
+                alert('密码更新成功');
+            });
+        }
+
+        // 3. 订阅管理
+        function initSubscription() {
+             document.getElementById('sub-plan').textContent = subscription.plan;
+             document.getElementById('sub-expiry').textContent = subscription.expiry;
+             document.getElementById('sub-price').textContent = subscription.price;
+             
+             document.querySelector('#subscription .btn-primary').addEventListener('click', () => alert('切换计划功能暂未开放。'));
+             document.querySelector('#subscription .btn-danger').addEventListener('click', () => alert('您已取消订阅。'));
+        }
+
+        // 4. 学习统计
+        function initStats() {
+            const statsGrid = document.getElementById('stats-grid');
+            statsGrid.innerHTML = learningStats.map(stat => `
+                <div class="stat-card">
+                    <h4>${stat.value}</h4>
+                    <p>${stat.label}</p>
+                </div>
+            `).join('');
+        }
+        
+        // 5. 成就徽章
+        function initBadges() {
+            const badgeGrid = document.getElementById('badge-grid');
+            badgeGrid.innerHTML = achievementBadges.map(badge => `
+                <div class="badge-card ${badge.acquired ? '' : 'locked'}">
+                    <img src="${badge.img}" alt="${badge.name}">
+                    <p>${badge.name}</p>
+                </div>
+            `).join('');
+        }
+        
+        // 6. 帮助与反馈
+        function initHelp() {
+            document.getElementById('feedback-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                document.getElementById('feedback-content').value = '';
+                document.getElementById('issue-type').selectedIndex = 0;
+                alert('反馈已提交，感谢您的支持！');
+            });
+        }
+        
+        // --- 初始化所有页面 ---
+        initProfile();
+        initSecurity();
+        initSubscription();
+        initStats();
+        initBadges();
+        initHelp();
+        
+        // 默认显示第一个页面
+        showPage('profile');
+    });
+</script>
+
+</body>
+</html>
